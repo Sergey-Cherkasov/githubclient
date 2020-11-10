@@ -32,7 +32,7 @@ class UsersPresenter : MvpPresenter<IUsersView>() {
 
     fun backPressed(): Boolean {
         router?.exit()
-        return true
+        return false
     }
 
     inner class UsersListPresenter : IUsersListPresenter {
