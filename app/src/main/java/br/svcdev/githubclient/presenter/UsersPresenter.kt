@@ -6,12 +6,14 @@ import br.svcdev.githubclient.model.entity.GithubUser
 import br.svcdev.githubclient.model.entity.GithubUserRepo
 import br.svcdev.githubclient.view.interfaces.IUserItemView
 import br.svcdev.githubclient.view.interfaces.IUsersView
+import br.svcdev.githubclient.view.ui.Screens
 import moxy.MvpPresenter
 
 class UsersPresenter : MvpPresenter<IUsersView>() {
 
-    private val TAG = UsersPresenter::class.simpleName
-    private val VERBOSE = true
+    private val tag = UsersPresenter::class.simpleName
+    private val verbose = true
+
     private val usersRepo = GithubUserRepo()
     private val router = GithubClientApp.instance?.getRouter()
     val usersListPresenter = UsersListPresenter()
@@ -36,15 +38,16 @@ class UsersPresenter : MvpPresenter<IUsersView>() {
     inner class UsersListPresenter : IUsersListPresenter {
 
         val users = mutableListOf<GithubUser>()
+
         override var itemClickListener: ((IUserItemView) -> Unit)? = {
-            if (VERBOSE) {
-                Log.v(TAG, "onItemClick " + it.pos)
+            if (verbose) {
+                Log.v(tag, "onItemClick " + it.pos)
             }
+            router?.navigateTo(Screens.UserScreen(users[it.pos].login))
         }
 
-
         override fun bindView(view: IUserItemView) {
-            var user = users[view.pos]
+            val user = users[view.pos]
             view.setLogin(user.login)
         }
 
