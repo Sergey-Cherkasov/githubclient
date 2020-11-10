@@ -41,10 +41,6 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackButtonListener {
         adapter.notifyDataSetChanged()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     override fun backPressed(): Boolean {
         return presenter.backPressed()
     }

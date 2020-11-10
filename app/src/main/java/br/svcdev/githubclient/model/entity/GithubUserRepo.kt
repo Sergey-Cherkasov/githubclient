@@ -1,7 +1,5 @@
 package br.svcdev.githubclient.model.entity
 
-import java.util.*
-
 class GithubUserRepo {
     private val repositories: List<GithubUser> = listOf(
             GithubUser("user1"),

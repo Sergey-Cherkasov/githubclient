@@ -10,7 +10,6 @@ class MainPresenter : MvpPresenter<MainView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-//        TODO: Nothing to do
         router?.replaceScreen(Screens.UsersScreen())
     }
 
