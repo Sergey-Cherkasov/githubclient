@@ -1,5 +1,7 @@
 package br.svcdev.githubclient.model.entity
 
+import io.reactivex.rxjava3.core.Observable
+
 class GithubUserRepo {
     private val repositories: List<GithubUser> = listOf(
             GithubUser("user1"),
@@ -9,7 +11,5 @@ class GithubUserRepo {
             GithubUser("user5")
     )
 
-    fun getUsers(): List<GithubUser> {
-        return repositories
-    }
+    fun getUsers(): Observable<List<GithubUser>> = Observable.just(repositories)
 }
