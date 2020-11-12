@@ -1,6 +1,7 @@
 package br.svcdev.githubclient.view.ui
 
 import androidx.fragment.app.Fragment
+import br.svcdev.githubclient.model.entity.GithubUser
 import br.svcdev.githubclient.view.ui.fragments.UserFragment
 import br.svcdev.githubclient.view.ui.fragments.UsersFragment
 import ru.terrakok.cicerone.android.support.SupportAppScreen
@@ -12,9 +13,9 @@ class Screens {
         }
     }
 
-    class UserScreen(val text: String) : SupportAppScreen() {
+    class UserScreen(val user: GithubUser) : SupportAppScreen() {
         override fun getFragment(): Fragment {
-            return UserFragment().getInstance(text)
+            return UserFragment().getInstance(user)
         }
     }
 }

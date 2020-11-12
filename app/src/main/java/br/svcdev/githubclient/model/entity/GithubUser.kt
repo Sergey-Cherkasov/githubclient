@@ -1,5 +1,7 @@
 package br.svcdev.githubclient.model.entity
 
-class GithubUser(val login: String) {
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-}
+@Parcelize
+data class GithubUser(val login: String) : Parcelable

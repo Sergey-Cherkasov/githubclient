@@ -4,6 +4,8 @@ import android.os.Bundle
 import br.svcdev.githubclient.GithubClientApp
 import br.svcdev.githubclient.R
 import br.svcdev.githubclient.presenter.MainPresenter
+import br.svcdev.githubclient.tests.Creation
+import br.svcdev.githubclient.tests.Operators
 import br.svcdev.githubclient.view.interfaces.IBackButtonListener
 import br.svcdev.githubclient.view.interfaces.MainView
 import moxy.MvpAppCompatActivity
@@ -32,7 +34,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     }
 
     override fun onBackPressed() {
-//        super.onBackPressed()
         for (fragment in supportFragmentManager.fragments) {
             if (fragment is IBackButtonListener && fragment.backPressed()) {
                 return
