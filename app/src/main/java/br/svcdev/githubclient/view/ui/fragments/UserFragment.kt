@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import br.svcdev.githubclient.databinding.FragmentUserBinding
+import br.svcdev.githubclient.model.entity.GithubUser
 import br.svcdev.githubclient.presenter.UserPresenter
 import br.svcdev.githubclient.view.interfaces.IBackButtonListener
 import br.svcdev.githubclient.view.interfaces.IUserView
@@ -15,12 +16,12 @@ class UserFragment : MvpAppCompatFragment(), IUserView, IBackButtonListener {
 
     private lateinit var binding: FragmentUserBinding
     private val presenter by moxyPresenter { UserPresenter() }
-    private var login: String = ""
+    private lateinit var user: GithubUser
 
-    fun getInstance(data: String): UserFragment {
+    fun getInstance(data: GithubUser): UserFragment {
         val fragment = UserFragment()
         val bundle = Bundle()
-        bundle.putString("login", data)
+        bundle.putParcelable("user", data)
         fragment.arguments = bundle
         return fragment
     }
@@ -30,7 +31,7 @@ class UserFragment : MvpAppCompatFragment(), IUserView, IBackButtonListener {
 
         arguments?.let {
             // запоминаем аргументы
-            login = it.get("login").toString()
+            user = it.getParcelable("user")!!
         }
     }
 
@@ -46,7 +47,7 @@ class UserFragment : MvpAppCompatFragment(), IUserView, IBackButtonListener {
     }
 
     override fun init() {
-        binding.tvLogin.text = login
+        binding.tvLogin.text = user.login
     }
 
 }
