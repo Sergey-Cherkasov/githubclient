@@ -10,16 +10,16 @@ class GithubClientApp : Application() {
     private lateinit var cicerone: Cicerone<Router>
 
     companion object {
-        var instance: GithubClientApp? = null
+        lateinit var instance: GithubClientApp
     }
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        initCiceron()
+        initCicerone()
     }
 
-    private fun initCiceron() {
+    private fun initCicerone() {
         cicerone = Cicerone.create()
     }
 

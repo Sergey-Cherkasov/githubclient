@@ -1,19 +1,19 @@
 package br.svcdev.githubclient.presenter
 
-import br.svcdev.githubclient.GithubClientApp
 import br.svcdev.githubclient.common.Logger
 import br.svcdev.githubclient.model.entity.GithubUser
-import br.svcdev.githubclient.model.entity.GithubUserRepo
+import br.svcdev.githubclient.model.repository.IGithubUsersRepo
 import br.svcdev.githubclient.view.interfaces.IUserItemView
 import br.svcdev.githubclient.view.interfaces.IUsersView
 import br.svcdev.githubclient.view.ui.Screens
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
+import ru.terrakok.cicerone.Router
 
-class UsersPresenter : MvpPresenter<IUsersView>() {
+class UsersPresenter(private val mainThreadScheduler: Scheduler,
+                     private val usersRepo: IGithubUsersRepo,
+                     val router: Router) : MvpPresenter<IUsersView>() {
 
-    private val usersRepo = GithubUserRepo()
-    private val router = GithubClientApp.instance?.getRouter()
     private val logger = Logger()
 
     val usersListPresenter = UsersListPresenter()
@@ -27,43 +27,39 @@ class UsersPresenter : MvpPresenter<IUsersView>() {
         super.onFirstViewAttach()
         viewState.init()
         loadData()
+
+        usersListPresenter.itemClickListener = { itemView ->
+            val user = usersListPresenter.users[itemView.pos]
+            router.navigateTo(Screens.UserScreen(user))
+        }
     }
 
     private fun loadData() {
-
-        usersRepo.getUsers().flatMap { users -> Observable.fromIterable(users) }
-                .subscribe(
-                        { user ->
-                            apply {
-                                usersListPresenter.users.add(user)
-                                logger.logi(TAG, user.login)
-                            }
-                        },
-                        { t -> logger.logi(TAG, "Error! ${t.message}") },
-                        { logger.logi(TAG, "onComplete") })
-
-        viewState.updateList()
+        usersRepo.getUsers()
+                .observeOn(mainThreadScheduler)
+                .subscribe({ repos ->
+                    usersListPresenter.users.clear()
+                    usersListPresenter.users.addAll(repos)
+                    viewState.updateList()
+                }, {
+                    println("Error: ${it.message}")
+                })
     }
 
     fun backPressed(): Boolean {
-        router?.exit()
+        router.exit()
         return false
     }
 
     inner class UsersListPresenter : IUsersListPresenter {
-
         val users = mutableListOf<GithubUser>()
 
-        override var itemClickListener: ((IUserItemView) -> Unit)? = {
-            if (VERBOSE) {
-                logger.logi(TAG, "onItemClick " + it.pos)
-            }
-            router?.navigateTo(Screens.UserScreen(users[it.pos]))
-        }
+        override var itemClickListener: ((IUserItemView) -> Unit)? = null
 
         override fun bindView(view: IUserItemView) {
             val user = users[view.pos]
-            view.setLogin(user.login)
+            user.login.let { view.setLogin(it) }
+            user.avatarUrl.let { view.loadAvatar(it) }
         }
 
         override fun getCount() = users.size
