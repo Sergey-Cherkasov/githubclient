@@ -2,9 +2,9 @@ package br.svcdev.githubclient.model.repository.retrofit
 
 import br.svcdev.githubclient.common.interfaces.INetworkStatus
 import br.svcdev.githubclient.model.api.interfaces.IUsersSource
+import br.svcdev.githubclient.model.cache.IGithubUsersCache
 import br.svcdev.githubclient.model.entity.GithubUser
 import br.svcdev.githubclient.model.entity.room.Database
-import br.svcdev.githubclient.model.entity.room.RoomGithubUser
 import br.svcdev.githubclient.model.repository.IGithubUsersRepo
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -12,35 +12,23 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class RetrofitGithubUsersRepo(
         private val api: IUsersSource,
         private val networkStatus: INetworkStatus,
-        private val db: Database)
+        private val db: Database,
+        private val usersCache: IGithubUsersCache)
     : IGithubUsersRepo {
 
-    override fun getUsers() = networkStatus.isOnlineSingle().flatMap { isOnline ->
-        if (isOnline) {
-            api.loadUsers()
-                    .flatMap { users ->
+    override fun getUsers(): Single<List<GithubUser>> =
+            networkStatus.isOnlineSingle().flatMap { isOnline ->
+                if (isOnline) {
+                    api.loadUsers().flatMap { users ->
                         Single.fromCallable {
-                            val roomUsers = users.map { user -> RoomGithubUser(
-                                    user.id ?: 0,
-                                    user.login ?: "",
-                                    user.avatarUrl ?: "",
-                                    user.reposUrl ?: ""
-                            ) }
-                            db.userDao.insert(roomUsers)
+                            usersCache.insert(db, users)
                             users
                         }
                     }
-        } else {
-            Single.fromCallable {
-                db.userDao.getAll().map { roomUser ->
-                    GithubUser(
-                            roomUser.id,
-                            roomUser.login,
-                            roomUser.avatarUrl,
-                            roomUser.reposUrl
-                    )
+                } else {
+                    Single.fromCallable {
+                        usersCache.getAll(db)
+                    }
                 }
-            }
-        }
-    }.subscribeOn(Schedulers.io())
-    }
+            }.subscribeOn(Schedulers.io())
+}

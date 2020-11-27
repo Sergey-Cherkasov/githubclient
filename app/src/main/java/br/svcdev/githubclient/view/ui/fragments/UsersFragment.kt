@@ -11,6 +11,7 @@ import br.svcdev.githubclient.common.AndroidNetworkStatus
 import br.svcdev.githubclient.common.interfaces.IBackButtonListener
 import br.svcdev.githubclient.databinding.FragmentUsersBinding
 import br.svcdev.githubclient.model.api.objects.ApiUsers
+import br.svcdev.githubclient.model.cache.room.RoomGithubUsersCache
 import br.svcdev.githubclient.model.entity.room.Database
 import br.svcdev.githubclient.model.repository.retrofit.RetrofitGithubUsersRepo
 import br.svcdev.githubclient.presenter.UsersPresenter
@@ -33,7 +34,8 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackButtonListener {
                 RetrofitGithubUsersRepo(
                         ApiUsers.api,
                         AndroidNetworkStatus(GithubClientApp.instance),
-                        Database.getInstance()),
+                        Database.getInstance(),
+                        RoomGithubUsersCache()),
                 GithubClientApp.instance.getRouter())
     }
 

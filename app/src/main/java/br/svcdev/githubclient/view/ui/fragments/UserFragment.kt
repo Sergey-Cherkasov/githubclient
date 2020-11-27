@@ -11,6 +11,7 @@ import br.svcdev.githubclient.common.AndroidNetworkStatus
 import br.svcdev.githubclient.common.interfaces.IBackButtonListener
 import br.svcdev.githubclient.databinding.FragmentUserBinding
 import br.svcdev.githubclient.model.api.objects.ApiRepos
+import br.svcdev.githubclient.model.cache.room.RoomGithubReposCache
 import br.svcdev.githubclient.model.entity.GithubUser
 import br.svcdev.githubclient.model.entity.room.Database
 import br.svcdev.githubclient.model.repository.retrofit.RetrofitGithubReposRepo
@@ -32,7 +33,8 @@ class UserFragment(private val user: GithubUser?) :
                 RetrofitGithubReposRepo(
                         ApiRepos.api,
                         AndroidNetworkStatus(GithubClientApp.instance),
-                        Database.getInstance()),
+                        Database.getInstance(),
+                        RoomGithubReposCache()),
                 AndroidSchedulers.mainThread(),
                 user
         )
