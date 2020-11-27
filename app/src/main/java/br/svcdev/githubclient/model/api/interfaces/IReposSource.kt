@@ -6,6 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface IReposSource {
-    @GET("/users/{user_name}/repos")
-    fun loadRepos(@Path("user_name") userName: String): Single<List<GithubRepo>>
+    @GET("/users/{user_login}/repos")
+    fun loadRepos(@Path("user_login") userLogin: String): Single<List<GithubRepo>>
 }

@@ -32,11 +32,11 @@ class UsersRVAdapter(val presenter: IUsersListPresenter, val imageLoader: IImage
         var textView: TextView = itemView.findViewById(R.id.tv_login)
         var imageView: ImageView = itemView.findViewById(R.id.iv_avatar)
 
-        override fun setLogin(text: String) {
+        override fun setLogin(text: String?) {
             textView.text = text
         }
 
-        override fun loadAvatar(url: String) = with(itemView) {
+        override fun loadAvatar(url: String?) = with(itemView) {
             imageLoader.loadInto(url, imageView)
         }
 

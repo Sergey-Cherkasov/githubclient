@@ -12,16 +12,9 @@ import ru.terrakok.cicerone.Router
 
 class UsersPresenter(private val mainThreadScheduler: Scheduler,
                      private val usersRepo: IGithubUsersRepo,
-                     val router: Router) : MvpPresenter<IUsersView>() {
-
-    private val logger = Logger()
+                     private val router: Router) : MvpPresenter<IUsersView>() {
 
     val usersListPresenter = UsersListPresenter()
-
-    companion object {
-        private val TAG = UserPresenter::class.qualifiedName
-        private val VERBOSE = true
-    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()

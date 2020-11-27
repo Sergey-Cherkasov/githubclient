@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.svcdev.githubclient.GithubClientApp
+import br.svcdev.githubclient.common.AndroidNetworkStatus
 import br.svcdev.githubclient.common.interfaces.IBackButtonListener
 import br.svcdev.githubclient.databinding.FragmentUsersBinding
 import br.svcdev.githubclient.model.api.objects.ApiUsers
+import br.svcdev.githubclient.model.entity.room.Database
 import br.svcdev.githubclient.model.repository.retrofit.RetrofitGithubUsersRepo
 import br.svcdev.githubclient.presenter.UsersPresenter
 import br.svcdev.githubclient.view.image.GlideImageLoader
@@ -26,8 +28,13 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackButtonListener {
 
     private lateinit var binding: FragmentUsersBinding
     private val presenter by moxyPresenter {
-        UsersPresenter(AndroidSchedulers.mainThread(),
-                RetrofitGithubUsersRepo(ApiUsers.api), GithubClientApp.instance.getRouter())
+        UsersPresenter(
+                AndroidSchedulers.mainThread(),
+                RetrofitGithubUsersRepo(
+                        ApiUsers.api,
+                        AndroidNetworkStatus(GithubClientApp.instance),
+                        Database.getInstance()),
+                GithubClientApp.instance.getRouter())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

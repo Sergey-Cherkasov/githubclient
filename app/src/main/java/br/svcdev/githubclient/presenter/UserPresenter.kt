@@ -1,5 +1,6 @@
 package br.svcdev.githubclient.presenter
 
+import br.svcdev.githubclient.common.Logger
 import br.svcdev.githubclient.model.entity.GithubRepo
 import br.svcdev.githubclient.model.entity.GithubUser
 import br.svcdev.githubclient.model.repository.IGithubReposRepo
@@ -37,7 +38,7 @@ class UserPresenter(
 
     private fun loadData() {
         user?.let {
-            reposRepo.getRepos(it.login)
+            reposRepo.getRepos(it)
                     .observeOn(mainThreadScheduler)
                     .subscribe({ repos ->
                         reposListPresenter.repos.clear()
