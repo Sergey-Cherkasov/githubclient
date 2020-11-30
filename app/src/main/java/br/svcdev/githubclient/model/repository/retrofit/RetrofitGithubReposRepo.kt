@@ -1,19 +1,17 @@
 package br.svcdev.githubclient.model.repository.retrofit
 
 import br.svcdev.githubclient.common.interfaces.INetworkStatus
-import br.svcdev.githubclient.model.api.interfaces.IReposSource
+import br.svcdev.githubclient.model.api.interfaces.IDataSource
 import br.svcdev.githubclient.model.cache.IGithubReposCache
 import br.svcdev.githubclient.model.entity.GithubRepo
 import br.svcdev.githubclient.model.entity.GithubUser
-import br.svcdev.githubclient.model.entity.room.Database
 import br.svcdev.githubclient.model.repository.IGithubReposRepo
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class RetrofitGithubReposRepo(
-        private val api: IReposSource,
+        private val api: IDataSource,
         private val networkStatus: INetworkStatus,
-        private val db: Database,
         private val reposCache: IGithubReposCache)
     : IGithubReposRepo {
 
@@ -24,7 +22,7 @@ class RetrofitGithubReposRepo(
                         api.loadRepos(userLogin)
                                 .flatMap { repositories ->
                                     Single.fromCallable {
-                                        reposCache.insert(db, userLogin, repositories)
+                                        reposCache.insert(userLogin, repositories)
                                         repositories
                                     }
                                 }
@@ -32,7 +30,7 @@ class RetrofitGithubReposRepo(
                             .subscribeOn(Schedulers.io())
                 } else {
                     Single.fromCallable {
-                        reposCache.getAll(db, user)
+                        reposCache.getAll(user)
                     }
 
                 }

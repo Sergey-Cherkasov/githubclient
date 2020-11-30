@@ -6,8 +6,9 @@ import br.svcdev.githubclient.model.entity.GithubUser
 import br.svcdev.githubclient.model.entity.room.Database
 import br.svcdev.githubclient.model.entity.room.RoomGithubRepository
 
-class RoomGithubReposCache : IGithubReposCache {
-    override fun insert(db: Database, userLogin: String, repositories: List<GithubRepo>) {
+class RoomGithubReposCache(val db: Database) : IGithubReposCache {
+
+    override fun insert(userLogin: String, repositories: List<GithubRepo>) {
         val roomUser = userLogin.let {
             db.userDao.findByLogin(it)
         } ?: throw RuntimeException("No such user in cache")
@@ -23,7 +24,7 @@ class RoomGithubReposCache : IGithubReposCache {
         db.repositoryDao.insert(roomRepos)
     }
 
-    override fun getAll(db: Database, user: GithubUser): List<GithubRepo> {
+    override fun getAll(user: GithubUser): List<GithubRepo> {
         val roomUser = user.login?.let {
             db.userDao.findByLogin(it)
         } ?: throw RuntimeException("No such user in cache")
