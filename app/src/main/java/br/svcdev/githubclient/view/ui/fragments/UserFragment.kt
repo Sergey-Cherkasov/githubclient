@@ -5,16 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import br.svcdev.githubclient.GithubClientApp
-import br.svcdev.githubclient.common.AndroidNetworkStatus
 import br.svcdev.githubclient.common.interfaces.IBackButtonListener
 import br.svcdev.githubclient.databinding.FragmentUserBinding
-import br.svcdev.githubclient.model.api.objects.ApiRepos
-import br.svcdev.githubclient.model.cache.room.RoomGithubReposCache
 import br.svcdev.githubclient.model.entity.GithubUser
-import br.svcdev.githubclient.model.entity.room.Database
-import br.svcdev.githubclient.model.repository.retrofit.RetrofitGithubReposRepo
 import br.svcdev.githubclient.presenter.UserPresenter
 import br.svcdev.githubclient.view.image.GlideImageLoader
 import br.svcdev.githubclient.view.interfaces.IUserView
@@ -23,34 +17,26 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class UserFragment(private val user: GithubUser?) :
-        MvpAppCompatFragment(), IUserView, IBackButtonListener {
+class UserFragment : MvpAppCompatFragment(), IUserView, IBackButtonListener {
+
+    companion object {
+        private const val USER_ARG = "user"
+        fun newInstance(user: GithubUser) = UserFragment().apply {
+            arguments = Bundle().apply { putParcelable(USER_ARG, user) }
+        }
+    }
 
     private lateinit var binding: FragmentUserBinding
+
     private val presenter by moxyPresenter {
-        UserPresenter(
-                GithubClientApp.instance.getRouter(),
-                RetrofitGithubReposRepo(
-                        ApiRepos.api,
-                        AndroidNetworkStatus(GithubClientApp.instance),
-                        Database.getInstance(),
-                        RoomGithubReposCache()),
-                AndroidSchedulers.mainThread(),
-                user
-        )
+        val user = arguments?.getParcelable<GithubUser>(USER_ARG) as GithubUser
+        UserPresenter(AndroidSchedulers.mainThread(), user).apply {
+            GithubClientApp.instance.appComponent.inject(this)
+        }
     }
+
     private val imageLoader = GlideImageLoader()
-    private lateinit var layoutManager: RecyclerView.LayoutManager
-    private lateinit var adapter: ReposRVAdapter
-
-    fun getInstance(data: GithubUser): UserFragment {
-
-        return UserFragment(data)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var adapter: ReposRVAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -64,9 +50,8 @@ class UserFragment(private val user: GithubUser?) :
     }
 
     override fun init() {
-        layoutManager = LinearLayoutManager(context)
+        binding.rvReposList.layoutManager = LinearLayoutManager(context)
         adapter = ReposRVAdapter(presenter.reposListPresenter)
-        binding.rvReposList.layoutManager = layoutManager
         binding.rvReposList.adapter = adapter
     }
 
@@ -79,7 +64,7 @@ class UserFragment(private val user: GithubUser?) :
     }
 
     override fun updateList() {
-        adapter.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
     }
 
 }
