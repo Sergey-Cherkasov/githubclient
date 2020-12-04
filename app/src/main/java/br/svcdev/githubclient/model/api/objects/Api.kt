@@ -1,14 +1,14 @@
 package br.svcdev.githubclient.model.api.objects
 
-import br.svcdev.githubclient.model.api.interfaces.IReposSource
+import br.svcdev.githubclient.model.api.interfaces.IDataSource
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-object ApiRepos {
-    val api: IReposSource by lazy {
+object Api {
+    val api: IDataSource by lazy {
         val gson = GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .excludeFieldsWithoutExposeAnnotation()
@@ -19,6 +19,6 @@ object ApiRepos {
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
-                .create(IReposSource::class.java)
+                .create(IDataSource::class.java)
     }
 }

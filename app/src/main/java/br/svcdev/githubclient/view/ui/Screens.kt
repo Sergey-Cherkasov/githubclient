@@ -11,19 +11,19 @@ import ru.terrakok.cicerone.android.support.SupportAppScreen
 class Screens {
     class UsersScreen : SupportAppScreen() {
         override fun getFragment(): Fragment {
-            return UsersFragment()
+            return UsersFragment.newInstance()
         }
     }
 
     class UserScreen(private val user: GithubUser) : SupportAppScreen() {
         override fun getFragment(): Fragment {
-            return UserFragment(null).getInstance(user)
+            return UserFragment.newInstance(user)
         }
     }
 
-    class RepoScreen(private val repo: GithubRepo?) : SupportAppScreen() {
+    class RepoScreen(private val repo: GithubRepo) : SupportAppScreen() {
         override fun getFragment(): Fragment {
-            return RepoFragment(null).getInstance(repo)
+            return RepoFragment.newInstance(repo)
         }
     }
 }

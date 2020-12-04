@@ -8,17 +8,25 @@ import br.svcdev.githubclient.common.interfaces.IBackButtonListener
 import br.svcdev.githubclient.view.interfaces.MainView
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
+import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
+import javax.inject.Inject
 
 class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
 
-    private val presenter by moxyPresenter { MainPresenter() }
-    private val navigatorHolder = GithubClientApp.instance.getNavigatorHolder()
+    private val presenter by moxyPresenter { MainPresenter().apply {
+        GithubClientApp.instance.appComponent.inject(this)
+    } }
+
+    @Inject lateinit var navigatorHolder: NavigatorHolder
+
     private val navigator = SupportAppNavigator(this, supportFragmentManager, R.id.container)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        GithubClientApp.instance.appComponent.inject(this)
     }
 
     override fun onResumeFragments() {
