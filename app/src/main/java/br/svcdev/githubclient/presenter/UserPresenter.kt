@@ -9,13 +9,18 @@ import br.svcdev.githubclient.view.ui.Screens
 import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
 class UserPresenter(
-        private val router: Router,
-        private val reposRepo: IGithubReposRepo,
         private val mainThreadScheduler: Scheduler,
         private val user: GithubUser?
 ) : MvpPresenter<IUserView>() {
+
+    @Inject
+    lateinit var reposRepo: IGithubReposRepo
+
+    @Inject
+    lateinit var router: Router
 
     val reposListPresenter = ReposListPresenter()
 
@@ -37,7 +42,7 @@ class UserPresenter(
 
     private fun loadData() {
         user?.let {
-            reposRepo.getRepos(it.login)
+            reposRepo.getRepos(it)
                     .observeOn(mainThreadScheduler)
                     .subscribe({ repos ->
                         reposListPresenter.repos.clear()
@@ -66,7 +71,5 @@ class UserPresenter(
         }
 
         override fun getCount() = repos.size
-
     }
-
 }

@@ -17,11 +17,11 @@ class ReposRVAdapter(val presenter: IReposListPresenter) :
         var repoName: TextView = itemView.findViewById(R.id.tv_repo_name)
         var repoDescription: TextView = itemView.findViewById(R.id.tv_repo_description)
 
-        override fun setRepoName(text: String) {
+        override fun setRepoName(text: String?) {
             repoName.text = text
         }
 
-        override fun setRepoDescription(text: String) {
+        override fun setRepoDescription(text: String?) {
             repoDescription.text = text
         }
 

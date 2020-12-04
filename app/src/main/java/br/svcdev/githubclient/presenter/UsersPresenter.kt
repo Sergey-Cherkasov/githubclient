@@ -1,6 +1,5 @@
 package br.svcdev.githubclient.presenter
 
-import br.svcdev.githubclient.common.Logger
 import br.svcdev.githubclient.model.entity.GithubUser
 import br.svcdev.githubclient.model.repository.IGithubUsersRepo
 import br.svcdev.githubclient.view.interfaces.IUserItemView
@@ -9,19 +8,18 @@ import br.svcdev.githubclient.view.ui.Screens
 import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
 import ru.terrakok.cicerone.Router
+import javax.inject.Inject
 
-class UsersPresenter(private val mainThreadScheduler: Scheduler,
-                     private val usersRepo: IGithubUsersRepo,
-                     val router: Router) : MvpPresenter<IUsersView>() {
+class UsersPresenter(private val mainThreadScheduler: Scheduler) : MvpPresenter<IUsersView>() {
 
-    private val logger = Logger()
+    @Inject
+    lateinit var usersRepo: IGithubUsersRepo
+
+    @Inject
+    lateinit var router: Router
 
     val usersListPresenter = UsersListPresenter()
 
-    companion object {
-        private val TAG = UserPresenter::class.qualifiedName
-        private val VERBOSE = true
-    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
