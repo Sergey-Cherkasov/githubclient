@@ -1,4 +1,4 @@
-package br.svcdev.githubclient.view.interfaces
+package br.svcdev.githubclient.common.interfaces
 
 interface IBackButtonListener {
     fun backPressed(): Boolean
